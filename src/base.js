@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC-Mju9bnETnARmQRcrvVco_2N936tIR9U",
-  authDomain: "buk-gear-chatbot.firebaseapp.com",
-  projectId: "buk-gear-chatbot",
-  storageBucket: "buk-gear-chatbot.appspot.com",
-  messagingSenderId: "578770552179",
-  appId: "1:578770552179:web:7dff7729fcdc255aed3106"
+  apiKey: "AIzaSyC5ON8PGwRMSH5-KTHXZp7HzzvPl-YmxYM",
+  authDomain: "complain-submission.firebaseapp.com",
+  projectId: "complain-submission",
+  storageBucket: "complain-submission.appspot.com",
+  messagingSenderId: "753181858548",
+  appId: "1:753181858548:web:f2d281b151516c8c9c5ca1"
 };
 
 // Initialize Firebase

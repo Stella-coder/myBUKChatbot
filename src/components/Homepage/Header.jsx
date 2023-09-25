@@ -3,8 +3,8 @@ import {Box} from "@mui/material"
 import {styled} from "@mui/styles"
  import { Link, useNavigate } from "react-router-dom"
 import MenuIcon from '@mui/icons-material/Menu';
-import { AuthContext } from "./admin/AuthState";
-import app from "./base";
+import { AuthContext } from "../../Auth/AuthState";
+import app from "../../base";
 import {getAuth} from  "firebase/auth"
 
 
@@ -51,36 +51,32 @@ const Header = () => {
     })
     return(
         <>
-                <MyContainer sx={{backgroundColor: navbar? "#1B2024": "darkblue"}} >
+                <MyContainer  >
             <Wrapper>
                 <MenuH onClick={changeToggle}><MenuIcon/></MenuH>
-                <Logo> logo</Logo>
+                <Logo>MDMS</Logo>
                 <Wrapper2> 
                     <Link to="/"style={{textDecoration:"none", color:"white"}} >
                     <MyTypography sx={{fontSize:"12px", textDecoration:"none", }}>Home</MyTypography>
                     </Link>
                    
-                    <Link to ="/chatbot" style={{textDecoration:"none", color:"white"}}>
-                    <MyTypography sx={{fontSize:"12px"}}>Chatbot</MyTypography>
+                    <Link to ="/" style={{textDecoration:"none", color:"white"}}>
+                    <MyTypography sx={{fontSize:"12px"}}>About</MyTypography>
                     </Link>
-                   
-                   
-                    
-                    {
-                        currentUser? <Link to="/dashboard" style={{textDecoration:"none", color:"white"}}>
-                        <MyTypography  sx={{fontSize:"12px"}}>Admin dashboard</MyTypography>
-                        </Link>: null
-                    }
-                   
+                    <Link to ="/message" style={{textDecoration:"none", color:"white"}}>
+                    <MyTypography sx={{fontSize:"12px"}}>Message</MyTypography>
+                    </Link>
+                 </Wrapper2> 
+                  <LoginButton> 
                    {
                         currentUser? 
-                        <div onClick={handleLogout} style={{fontSize:"12px"}}>LogOut</div>
+                        <div onClick={handleLogout} style={{fontSize:"12px"}}>LOG OUT</div>
                         :
-                        <Link to="login" style={{textDecoration:"none", color:"white"}}>
-                        <MyTypography sx={{fontSize:"12px"}}> Admin Login</MyTypography>
+                        <Link to="/login" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypography sx={{fontSize:"12px"}}>Login</MyTypography>
                         </Link>
                     }
-                </Wrapper2>
+                </LoginButton>
               
               
             </Wrapper>
@@ -94,20 +90,16 @@ const Header = () => {
                     <MyTypographyMobile onClick={changeToggle} sx={{fontSize:"12px", textDecoration:"none", }}>Home</MyTypographyMobile>
                     </Link>
                     
-                    <Link to ="/chatbot" style={{textDecoration:"none", color:"white"}}>
-                    <MyTypographyMobile onClick={changeToggle} sx={{fontSize:"12px"}}>Chatbot</MyTypographyMobile>
+                    <Link to ="/" style={{textDecoration:"none", color:"white"}}>
+                    <MyTypographyMobile onClick={changeToggle} sx={{fontSize:"12px"}}>About</MyTypographyMobile>
                     </Link>
-                    {
-                        currentUser? <Link to="/dashboard" style={{textDecoration:"none", color:"white"}}>
-                        <MyTypographyMobile  sx={{fontSize:"12px"}}>Admin dashboard</MyTypographyMobile>
-                        </Link>: null
-                    }
+
                     {
                         currentUser? 
-                        <div onClick={handleLogout} style={{fontSize:"12px"}}>LogOut</div>
+                        <div onClick={handleLogout} style={{fontSize:"12px"}}>LOG OUT</div>
                         :
                         <Link to="login" style={{textDecoration:"none", color:"white"}}>
-                        <MyTypographyMobile sx={{fontSize:"12px"}}> Admin Login</MyTypographyMobile>
+                        <MyTypographyMobile onClick={changeToggle}  sx={{fontSize:"12px"}}> Login</MyTypographyMobile>
                         </Link>
                     }
             </WrapText>
@@ -126,6 +118,7 @@ export default Header
         color:"white",
         zIndex:10,
         transition:"all 350ms",
+        backgroundColor:"rgb(0,0,83)"
        
     }) 
     const Wrapper = styled(Box)({
@@ -137,9 +130,10 @@ export default Header
        
     }) 
     const Logo = styled("div")({  
-        
+        letterSpacing: 2,
+        fontWeight:"bold",
         "@media screen and (min-width:768px)":{
-            flex:0.7
+            // flex:0.7
         }
     }) 
     const WrapText = styled("div")({  
@@ -157,7 +151,8 @@ export default Header
     const Wrapper2 = styled(Box)({
         display:"flex",
         justifyContent:"space-around",
-        width:"500px",
+        width:"300px",
+       
         
         "@media screen and (max-width:768px)":{
             display:"none"
@@ -208,5 +203,14 @@ export default Header
             color:"gray",
         }    
     }) 
-    
-    
+    const LoginButton = styled("div")({
+        backgroundColor:"darkblue",
+        borderRadius:"10px",
+        padding:"8px",
+        color:'white',
+        fontWeight:"bold",
+        cursor:"pointer",
+        "@media screen and (max-width:768px)":{
+            display:"none"
+        }
+    })

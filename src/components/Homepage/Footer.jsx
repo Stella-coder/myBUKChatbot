@@ -6,7 +6,7 @@ const Footer = ()=>{
     return(
         <Container>
             <Wrapper>
-                COPYRIGHT DEVELOPED BY BUK STUDENT 2023. ALL RIGHTS RESERVED
+                COPYRIGHT DEVELOPED. ALL RIGHTS RESERVED
             </Wrapper>
         </Container>
     )
@@ -17,7 +17,7 @@ export default Footer
 const Container = styled(Box)({
     height:"70px",
     width:"100%",
-    backgroundColor:"darkblue",
+    backgroundColor:"blue",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",

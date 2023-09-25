@@ -2,9 +2,9 @@ import React from "react"
 import { Box, Button, Paper, Typography } from "@mui/material"
 import {styled} from "@mui/styles"
 
-import { Carousel } from 'antd';
+
 import { Link } from "react-router-dom";
-import img1 from "./2.jpg"
+import img1 from "../2.png"
 
 
 const HeroSection = () =>{
@@ -12,9 +12,9 @@ const HeroSection = () =>{
         <MyBox>
           <BdgImg>
             <Modal>
-            <Text component="h1">BUK General admission and examination Guideline Chatbot (BUK GEAR bot).</Text>
-            <Link to="/chatbot" style={{textDecoration:"none"}}>
-            <ButtonB >CHAT WITH BOT</ButtonB>
+            <Text component="h1">Hisbah Commission Complain System (HCCS).</Text>
+            <Link to="/reg" style={{textDecoration:"none"}}>
+            <ButtonB >MAKE COMPLAIN</ButtonB>
             </Link>
             </Modal>
           </BdgImg>
@@ -26,27 +26,26 @@ const HeroSection = () =>{
 export default HeroSection
 
 const MyBox = styled(Box)({
-    padding:"50px 0px",
+    // padding:"50px 0px",P
     height:"80vh",
     width:"100%",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-
     "@media screen and (max-width:768px)":{
         height:"60vh",
     }
 })
 const BdgImg = styled(Box)({
-    height:"90%",
-    width:"90%",
-    backgroundImage: `url(${img1})`,
+    height:"100%",
+    width:"100%",
+    // backgroundImage: `url(${img1})`,
+    backgroundColor:"darkblue",
     backgroundSize:"cover",
     backgroundRepeat:"no-repeat",
     backgroundPosition:"fixed",
    
-    marginTop:"50px",
-    borderRadius:"10px"
+    
     
 })
 const Modal = styled(Box)({

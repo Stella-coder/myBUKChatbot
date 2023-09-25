@@ -5,31 +5,52 @@ import {
   Route,
   
 } from "react-router-dom"
-import CreateIntent from "./components/admin/CreateIntent";
-import Dashboard from "./components/admin/Dashboard";
-import LoginPage from "./components/admin/LoginPage";
-import Chabot from "./components/admin/userPage/Chatbot";
-import Footer from "./components/admin/userPage/Footer";
-import HomePage from "./components/admin/userPage/HomePage";
-import Header from './components/Header';
+
+import LoginPage from "./components/login/LoginPage";
 import React from "react"
-import EditIntent from "./components/admin/EditIntent";
-import PrivateRoute from "./components/admin/PrivateRoute";
+import HomePage from "./components/Homepage/Homepage";
+import SubmitComplain from "./components/login/RegisterComplain";
+import Message from "./components/Homepage/Message";
+import SideBar from "./components/dashboard/SideBar";
+import AddMediator from "./components/dashboard/AddMediator";
+import Dashboard from "./components/dashboard/Dashboard";
+import Appointments from "./components/dashboard/Appointments";
+import Complains from "./components/dashboard/Complains";
+import Footer from "./components/Homepage/Footer";
+
 
 function App() {
   return (
     <Router>
-      <Header/>
+      {/* <SideBar/> */}
+      <div>
       <Routes>
         <Route path= "/" Component={HomePage} />
-        <Route path= "/chatbot" Component={Chabot} />
+        {/* <Route path= "/chatbot" Component={Chabot} /> */}
        
-        <Route path = "/create" Component={CreateIntent} />
-        <Route path = "/edit" Component={EditIntent} />
-        <Route path = "/login" Component={LoginPage} />
-        <Route path="/dashboard" Component={Dashboard} />
+        {/* <Route path = "/create" Component={CreateIntent} /> */}
+        {/* <Route path = "/edit/:id" Component={EditIntent} /> */}
+        {/* <Route path = "/login" Component={LoginPage} /> */}
+        
+        <Route path="/login" Component={LoginPage} />
+        <Route path="/message" Component={Message} />
+      
+        
+        <Route path="/register" Component={SubmitComplain} />
+        
+      </Routes>
+      </div>
+      <div>
+     <SideBar/>
+     <Routes>
+     <Route path="/dash" Component={Dashboard} />
+     <Route path="/add" Component={AddMediator} />
+     <Route path="/appointments" Component={Appointments} />
+     <Route path="/complains" Component={Complains} />
+     
       </Routes>
       <Footer/>
+      </div>
     </Router>
   );
 }
