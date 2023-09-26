@@ -16,19 +16,24 @@ const SideBar = ()=>{
 
     const checkRole = async () => {
       try {
+        // Replace 'fieldName' with the actual name of the field containing the user's role
+        const fieldToCheck = 'userId';
+    
         const querySnapshot = await getDocs(
-          query(collection(firestore, 'users'), where('role', '==', 'admin'))
+          query(collection(firestore, 'users'), where(fieldToCheck, '==', 'admin'))
         );
     
-        const hasData = !querySnapshot.empty; // True if there are documents matching the query
-          setCheckAdmin(true)
-        return hasData;
+        const userDoc = querySnapshot.docs.find((doc) => doc.id === currentUser.id);
+    
+        const isAdmin = !!userDoc; // True if the current user has the role 'admin'
+    
+        return isAdmin;
       } catch (error) {
-        console.error('Error checking if data exists:', error);
-        setCheckAdmin(false)
+        console.error('Error checking if the current user is an admin:', error);
         return false; // Handle errors and return false
       }
     };
+    
     
     
     const handleLogout = async () => {
@@ -61,14 +66,14 @@ const SideBar = ()=>{
       };
       useEffect(()=>{
         fetchData()
-        checkRole()
+        checkIfAdmin()
       },[])
      
     return(
         <Container>
             <Logo>HCCS</Logo>
 {
-    checkAdmin?
+    checkAdmin && currentUser.uid === user?
     <Wrapper>
     <Link to="/" style={{textDecoration:"none", color:"white"}}>
         <Holder>Home</Holder>
