@@ -1,60 +1,97 @@
 import { Box } from "@mui/material"
 import { styled } from "@mui/styles"
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import app from "../../base"
 import { getAuth } from "firebase/auth"
 import { AuthContext } from "../../Auth/AuthState"
-import { Firestore, collection, getDocs, query, where } from "firebase/firestore"
+import {  collection, getDocs, getFirestore, query, where } from "firebase/firestore"
 
+const firestore = getFirestore(app);
 const SideBar = ()=>{
     const nav = useNavigate();
+    const [data, setData] = useState([])
+    const [checkAdmin, setCheckAdmin] = useState(false)
     const {currentUser} = useContext(AuthContext)
-    const check = ()=>{
-        try {
-            const querySnapshot =  getDocs(
-              query(collection(Firestore, 'users'), where('role', '!=', ''))
-            );
-        
-            return !querySnapshot.empty; // Return true if there is at least one document
-          } catch (error) {
-            console.error('Error checking if user with role exists:', error);
-            return false; // Handle errors and return false
-          }
-    }
-console.log("check", check)
+
+    const checkRole = async () => {
+      try {
+        const querySnapshot = await getDocs(
+          query(collection(firestore, 'users'), where('role', '==', 'admin'))
+        );
+    
+        const hasData = !querySnapshot.empty; // True if there are documents matching the query
+          setCheckAdmin(true)
+        return hasData;
+      } catch (error) {
+        console.error('Error checking if data exists:', error);
+        setCheckAdmin(false)
+        return false; // Handle errors and return false
+      }
+    };
+    
+    
     const handleLogout = async () => {
       try {
         // Sign out the user using Firebase Auth
         await getAuth(app).signOut();
-  
         // Redirect to the login page or any other desired page
         nav("/");
       } catch (error) {
         console.log(error);
       }
     };
+
+    const fetchData = async () => {
+        try {
+          const querySnapshot = await getDocs(
+            query(collection(firestore, 'users'), where('role', '!=', ''))
+          );
+      
+          const fetchedData = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+      
+          setData(fetchedData);
+          console.log(data, "data");
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+      useEffect(()=>{
+        fetchData()
+        checkRole()
+      },[])
+     
     return(
         <Container>
-            <Logo> - MDCM</Logo>
-            <Wrapper>
-            <Link to="/dash" style={{textDecoration:"none", color:"white"}}>
-                <Holder>Dashboard</Holder>
-                </Link>
-                <Link to="/add" style={{textDecoration:"none", color:"white"}}>
-                <Holder>+ Add Mediator</Holder>
-                </Link>
-                <Holder onClick={handleLogout}>Log out</Holder>
-            </Wrapper>
-            <Wrapper>
-            <Link to="/complains" style={{textDecoration:"none", color:"white"}}>
-                <Holder>Complains</Holder>
-                </Link>
-                <Link to="/appointments" style={{textDecoration:"none", color:"white"}}>
-                <Holder>Appointments</Holder>
-                </Link>
-                <Holder>Log out</Holder>
-            </Wrapper>
+            <Logo>HCCS</Logo>
+{
+    checkAdmin?
+    <Wrapper>
+    <Link to="/" style={{textDecoration:"none", color:"white"}}>
+        <Holder>Home</Holder>
+        </Link>
+    <Link to="/dashboard" style={{textDecoration:"none", color:"white"}}>
+        <Holder>Dashboard</Holder>
+        </Link>
+        <Link to="/add" style={{textDecoration:"none", color:"white"}}>
+        <Holder>+ Add Mediator</Holder>
+        </Link>
+        <Holder onClick={handleLogout}>Log out</Holder>
+    </Wrapper>:
+    <Wrapper>
+    <Link to="/" style={{textDecoration:"none", color:"white"}}>
+        <Holder>Home</Holder>
+        </Link>
+    <Link to="/complains" style={{textDecoration:"none", color:"white"}}>
+        <Holder>Complains</Holder>
+        </Link>
+       
+        <Holder onClick={handleLogout}>Log out</Holder>
+    </Wrapper>
+}
         </Container>
     )
 }
@@ -93,7 +130,10 @@ const Holder = styled(Box)({
 })
 const Logo = styled(Box)({
     display:"flex",
-    margin:"20px 0px"
+    margin:"20px",
+    letterSpacing: 2,
+    fontWeight:"bold",
+
 })
 // "@media screen and (max-width:768px)":{
 //     display:

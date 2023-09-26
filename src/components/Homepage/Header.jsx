@@ -6,32 +6,57 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AuthContext } from "../../Auth/AuthState";
 import app from "../../base";
 import {getAuth} from  "firebase/auth"
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import App from "../../App";
 
-
+const firestore = getFirestore(App);
 const Header = () => {
+    const nav = useNavigate();
     const { currentUser } = useContext(AuthContext);
-    
-        const [toggle, setToggle] = useState(false)
+    const [toggle, setToggle] = useState(false)
+    const [checkAdmin, setCheckAdmin] = useState("")
+
    
     const changeToggle =()=>{
         setToggle(!toggle)
         // console.log(toggle)
     }
     
-
-    const[navbar, setNavbar] = useState(false)
-
-    const changeBgColor = ()=> {
-        // console.log(window.scrollY)
-        if (window.scrollY >=100){
-            setNavbar(true)
-        }else{
-            setNavbar(false)
+    const check = async () => {
+        try {
+          const querySnapshot = await getDocs(
+            query(collection(firestore, 'users'), where('role', '==', 'admin'))
+          );
+      
+          const isAdmin = !querySnapshot.empty; // True if there is at least one document with role "admin"
+        //   setCheckAdmin(isAdmin); // Set the checkAdmin state based on the result
+          
+          if (isAdmin) {
+            setCheckAdmin("admin")
+            return 'admin'; // Return 'admin' if the user's role is admin
+          }
+      
+          // If not an admin, check for other roles (e.g., 'mediator')
+          const mediatorQuerySnapshot = await getDocs(
+            query(collection(firestore, 'users'), where('role', '==', 'mediator'))
+          );
+      
+          const isMediator = !mediatorQuerySnapshot.empty; // True if there is at least one document with role "mediator"
+          
+          if (isMediator) {
+            setCheckAdmin("mediator")
+            return 'mediator'; // Return 'mediator' if the user's role is mediator
+          }
+          setCheckAdmin("empty")
+          // If neither admin nor mediator, return a different value (e.g., 'empty')
+          return 'empty';
+        } catch (error) {
+          console.error('Error checking user role:', error);
+          setCheckAdmin(false); // Handle errors and set checkAdmin to false
+          return 'error'; // Return an error value
         }
-       
-    }
-
-    const nav = useNavigate();
+      };
+      
 
   const handleLogout = async () => {
     try {
@@ -44,17 +69,16 @@ const Header = () => {
       console.log(error);
     }
   };
-
+console.log(checkAdmin, "admin")
     useEffect(()=>{
-        changeBgColor()
-        window.addEventListener("scroll", changeBgColor)
-    })
+        check()
+    },[])
     return(
         <>
                 <MyContainer  >
             <Wrapper>
                 <MenuH onClick={changeToggle}><MenuIcon/></MenuH>
-                <Logo>MDMS</Logo>
+                <Logo>HCCS</Logo>
                 <Wrapper2> 
                     <Link to="/"style={{textDecoration:"none", color:"white"}} >
                     <MyTypography sx={{fontSize:"12px", textDecoration:"none", }}>Home</MyTypography>
@@ -63,9 +87,21 @@ const Header = () => {
                     <Link to ="/" style={{textDecoration:"none", color:"white"}}>
                     <MyTypography sx={{fontSize:"12px"}}>About</MyTypography>
                     </Link>
-                    <Link to ="/message" style={{textDecoration:"none", color:"white"}}>
+                    {
+                        checkAdmin === "empty"?
+                        <Link to ="/message" style={{textDecoration:"none", color:"white"}}>
                     <MyTypography sx={{fontSize:"12px"}}>Message</MyTypography>
                     </Link>
+                    : checkAdmin === "mediator"?
+                    <Link to ="/complains" style={{textDecoration:"none", color:"white"}}>
+                    <MyTypography sx={{fontSize:"12px"}}>View Complains</MyTypography>
+                    </Link>:
+                    checkAdmin === "admin"?
+                    <Link to ="/dashboard" style={{textDecoration:"none", color:"white"}}>
+                    <MyTypography sx={{fontSize:"12px"}}>Admin Dashboard</MyTypography>
+                    </Link>:null
+                   
+                    }
                  </Wrapper2> 
                   <LoginButton> 
                    {
@@ -151,19 +187,13 @@ export default Header
     const Wrapper2 = styled(Box)({
         display:"flex",
         justifyContent:"space-around",
-        width:"300px",
-       
-        
+        minWidth:"500px",
         "@media screen and (max-width:768px)":{
             display:"none"
         }
         
     }) 
-    // const Cart = styled(Box)({
-    //       display:"flex",
-    //       position:"relative",
-    //       cursor:"pointer"
-    // }) 
+
     const MobileWrapper = styled(Box)({
          height:"100vh",
          width:"100vw",

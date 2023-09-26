@@ -14,7 +14,6 @@ import Message from "./components/Homepage/Message";
 import SideBar from "./components/dashboard/SideBar";
 import AddMediator from "./components/dashboard/AddMediator";
 import Dashboard from "./components/dashboard/Dashboard";
-import Appointments from "./components/dashboard/Appointments";
 import Complains from "./components/dashboard/Complains";
 import Footer from "./components/Homepage/Footer";
 
@@ -43,9 +42,8 @@ function App() {
       <div>
      <SideBar/>
      <Routes>
-     <Route path="/dash" Component={Dashboard} />
+     <Route path="/dashboard" Component={Dashboard} />
      <Route path="/add" Component={AddMediator} />
-     <Route path="/appointments" Component={Appointments} />
      <Route path="/complains" Component={Complains} />
      
       </Routes>

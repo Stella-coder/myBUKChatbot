@@ -1,7 +1,7 @@
 import React from "react"
 import { Box } from "@mui/material"
 import { styled } from "@mui/styles"
-import img from "../1.png"
+import img from "../2.png"
 
 const About = () =>{
     return(

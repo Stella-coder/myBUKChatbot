@@ -1,6 +1,6 @@
 import { Box,  } from "@mui/material"
 import { styled } from "@mui/styles"
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,13 +9,18 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, getFirestore, query, where } from "firebase/firestore";
 import app from "../../base";
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { deleteUser, getAuth } from "firebase/auth";
+import { AuthContext } from "../../Auth/AuthState";
 
 const firestore = getFirestore(app);
 const Dashboard = ()=>{
+    const {currentUser} = useContext(AuthContext)
     const[data, setData] = useState([])
+    const[complain, setComplain] = useState([])
+    console.log(currentUser, "user")
 
     const columns = [
         { id: 'name', label: 'Name', minWidth: 170 },
@@ -72,18 +77,73 @@ const Dashboard = ()=>{
         }
       };
       console.log(data, "data")
+
+      const deleteData = async (id) => {
+        try {
+          const collectionName = 'users';
+          const docRef = doc(firestore, collectionName, id);
+          await deleteDoc(docRef);
+      
+          // Fetch the updated data after deletion
+          await fetchData();
+      
+          // Display a success message
+          console.log(`${id} item deleted successfully.`);
+        } catch (error) {
+          console.error('Error while deleting:', error);
+        }
+      }
+      const deleteAcc = (id) => {
+  // Get the current user
+  const auth = getAuth();
+  const user = auth.currentUser;
+  console.log(user, "user")
+
+  // Check if a user is signed in
+  if (user) {
+    // You might want to add a confirmation dialog here before deleting.
+    // Example: if (!window.confirm('Are you sure you want to delete this account?')) return;
+
+    // Delete the user's account
+    deleteUser(user)
+      .then(() => {
+        // User account deleted successfully
+        // Now you can delete the data associated with the user if needed
+        deleteData(id);
+        console.log('User account deleted successfully.');
+      })
+      .catch((error) => {
+        // Handle errors (e.g., user not signed in)
+        console.error('Error deleting user account:', error);
+      });
+  }
+}
+const fetchComplain = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(firestore, 'complains'));
+      const fetchedData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setComplain(fetchedData);
+      console.log(data, "data");
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
     
       useEffect(() => {
         
         fetchData();
-        // deleteIntent()
+        // deleteAcc()
+        fetchComplain()
       }, []);
     return(
         <Container>
             <Wrapper>
                 <Holder>
                     <Box1>No of mediators<Text>{data.length}</Text></Box1>
-                    <Box1>No of Complains<Text>90</Text></Box1>
+                    <Box1>No of Complains<Text>{complain.length}</Text></Box1>
                 </Holder>
                 <Holder2>
                     <Header>Accounts</Header>
@@ -108,7 +168,7 @@ const Dashboard = ()=>{
       {/* Render the icons in the "Actions" column */}
       <TableCell align="center">
         {/* <EditIcon color="primary" /> */}
-        <DeleteIcon color="error" />
+        <DeleteIcon onClick={()=>{deleteAcc(item.id)}} color="error" />
       </TableCell>
     </TableRow>
   ))}
@@ -154,7 +214,8 @@ const Wrapper = styled(Box)({
 const Holder = styled(Box)({
     display:"flex",
     width:"100%",
-    justifyContent:"space-around"
+    justifyContent:"space-around",
+    flexWrap:"wrap"
 })
 const Box1 = styled(Box)({
     background:"rgba(255,255,255,0.2)",

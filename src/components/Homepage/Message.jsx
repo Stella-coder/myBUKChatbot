@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react"
 import Header from "./Header"
 import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore"
 import app from "../../base"
-import { useParams } from "react-router-dom"
 import { AuthContext } from "../../Auth/AuthState"
 
 const firestore = getFirestore(app);
@@ -48,19 +47,26 @@ const Message = ()=>{
        
       }, [currentUser]);
 
-console.log(data.date, "datatt")
+// console.log(data.date, "datatt")
     return(
         <Container>
             <Header/>
             <Wrapper>
                 <Holder>
                     <MessageIcon>Message</MessageIcon>
-                    <MessageHolder>
-                        Hello {data.id},
+                    {
+                        data?
+                        <MessageHolder>
+                        Hello {data.firstname},
                        {
                         data.date === undefined? <Mes> No schedule yet, kindly check back later. </Mes>:  <Mes>Your complain has been approved and your physical meeting has been schedule for {data.date}.</Mes>
                        }
-                    </MessageHolder>
+                    </MessageHolder>:
+                    <MessageHolder>
+                    Hello,
+                    <Mes> No message yet, kindly send complain to get a schedule </Mes>
+                </MessageHolder>
+                    }
                 </Holder>
             </Wrapper>
         

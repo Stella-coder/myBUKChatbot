@@ -64,16 +64,8 @@ const[toggle, setToggle] = useState(false)
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             // Handle successful login
-            const user = userCredential.user;
-            // alert("Login successful")
-            // console.log("Login success:", user);
-            const querySnapshot =  getDocs(
-                query(collection(firestore, 'users'), where('role', '!=', ''))
-              );
-            if (querySnapshot){
-                nav("/dash")
-            }
-            nav("/register")
+            const user = userCredential.user;       
+            nav("/message")
           })
           .catch((error) => {
             // Handle login error

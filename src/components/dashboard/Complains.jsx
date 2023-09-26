@@ -1,6 +1,6 @@
 import { Box, Modal } from "@mui/material"
 import { styled } from "@mui/styles"
-import { collection, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react"
 import app from "../../base";
 import Paper from '@mui/material/Paper';
@@ -53,6 +53,7 @@ const Complains = ()=>{
       })
         .then(() => {
           alert(`Appointment updated for ${selectedDate}`);
+          fetchData()
            //   const docRef = collection(firestore, 'appointment');
     //                   addDoc(docRef, newData);
     //                   console.log('Data submitted successfully');
@@ -64,8 +65,6 @@ const Complains = ()=>{
     } else {
       alert('Please select a date, user ID, and document ID for the appointment update.');
     }
-
-
 
       };
     
@@ -83,21 +82,18 @@ const Complains = ()=>{
         
        
       }, []);
-    
-    
-    
+
 
     const columns = [
         { id: 'avatar', label: 'Image', minWidth: 170 },
-
-        {
+         {
           id: 'firstname',
           label: 'Name',
           minWidth: 170,
         },
         {
           id: 'phoneNo',
-          label: 'phone No',
+          label: 'Phone No',
           minWidth: 170,
         },
         {
@@ -136,6 +132,21 @@ const Complains = ()=>{
 
       };
       console.log(data, "data")
+      const deleteData = async (id) => {
+        try {
+          const collectionName = 'complains';
+          const docRef = doc(firestore, collectionName, id);
+          await deleteDoc(docRef);
+      
+          // Fetch the updated data after deletion
+          await fetchData();
+      
+          // Display a success message
+          console.log(`${id} item deleted successfully.`);
+        } catch (error) {
+          console.error('Error while deleting:', error);
+        }
+      }
     
       useEffect(() => { 
         fetchData();
@@ -181,11 +192,11 @@ const Complains = ()=>{
    <TableCell>{item.spouseNo}</TableCell>
    <TableCell onClick ={handleOpen}>{
     item.date === undefined? "Book": item.date
-   }k</TableCell>
+   }</TableCell>
 
    {/* Render the icons in the "Actions" column */}
    <TableCell align="center">
-     <DeleteIcon color="error" />
+     <DeleteIcon color="error" onClick={()=>{deleteData(item.id)}} />
    </TableCell>
    <Modal
         open={open}
