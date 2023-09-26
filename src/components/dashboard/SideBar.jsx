@@ -66,14 +66,14 @@ const SideBar = ()=>{
       };
       useEffect(()=>{
         fetchData()
-        checkIfAdmin()
+        checkRole()
       },[])
      
     return(
         <Container>
             <Logo>HCCS</Logo>
 {
-    checkAdmin && currentUser.uid === user?
+    checkAdmin?
     <Wrapper>
     <Link to="/" style={{textDecoration:"none", color:"white"}}>
         <Holder>Home</Holder>
