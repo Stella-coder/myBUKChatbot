@@ -156,7 +156,7 @@ const Header = () => {
                         null
                     }
                    
-                   <LoginButton> 
+                   
                    {
                         currentUser? 
                         <div onClick={handleLogout} style={{fontSize:"12px"}}>LOG OUT</div>
@@ -165,7 +165,7 @@ const Header = () => {
                         <MyTypographyMobile sx={{fontSize:"12px"}}>Login</MyTypographyMobile>
                         </Link>
                     }
-                </LoginButton>
+                
             </WrapText>
         </MobileWrapper>
         : null
