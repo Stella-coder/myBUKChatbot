@@ -23,66 +23,56 @@ const firestore = getFirestore(app);
 const Complains = ()=>{
     const[data, setData] = useState([])
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [bookedDates, setBookedDates] = useState([]);
-    // const [userId, setUserId] = useState('');
-    // const {id} = useParams()
-    
+    const [selectedItemId, setSelectedItemId] = useState(null);
+   
+     const handleOpen = (id) => {
+    // Set the selected item ID when the modal is opened
+    setSelectedItemId(id);
+    setOpen(true);
+  };
     const handleDateChange = (date) => {
         setSelectedDate(date);
       };
-
-   
-                      
+                   
       const handleBookAppointment = (id) => {
-        if (selectedDate) {
-          // Check if the selected date is already booked
-          if (bookedDates.includes(selectedDate.toUTCString())) {
-            alert('This date is already booked. Please choose another date.');
-            return;
-          }
-    
-          // Update the list of booked dates in Firestore
-        const docRef = doc(firestore, 'complains', id);
-
-      // Update the document with the new date field
-      updateDoc(docRef, {
-        date: selectedDate.toUTCString(),
-      })
-        .then(() => {
-          alert(`Appointment updated for ${selectedDate}`);
-          fetchData()
-           //   const docRef = collection(firestore, 'appointment');
-    //                   addDoc(docRef, newData);
-    //                   console.log('Data submitted successfully');
+        if (id === selectedItemId){
+          if (selectedDate) {
+            // Check if the selected date is already booked
+            if (bookedDates.includes(selectedDate.toUTCString())) {
+              alert('This date is already booked. Please choose another date.');
+              return;
+            }
+      
+            // Update the list of booked dates in Firestore
+          const docRef = doc(firestore, 'complains', id);
+  
+        // Update the document with the new date field
+        updateDoc(docRef, {
+          date: selectedDate.toUTCString(),
         })
-        .catch((error) => {
-          console.error('Error updating appointment:', error);
-          alert('An error occurred while updating the appointment.');
-        });
-    } else {
-      alert('Please select a date, user ID, and document ID for the appointment update.');
-    }
-
+          .then(() => {
+            alert(`Appointment updated for ${selectedDate}`);
+            handleClose()
+            console.log(id, "id")
+            fetchData()
+          })
+          .catch((error) => {
+            console.error('Error updating appointment:', error);
+            alert('An error occurred while updating the appointment.');
+          });
+      } else {
+        alert('Please select a date, user ID, and document ID for the appointment update.');
+      }
+      
+        }
+        else {
+          alert('Selected item does not match the current item.');
+        }
       };
     
-      // Fetch the booked dates from Firestore on component mount
-      useEffect(() => {
-        try {
-            const querySnapshot =  getDocs(collection(firestore, 'bookedAppointments'));
-            const fetchedData = querySnapshot.docs.map((doc) => doc.data().date)
-            setBookedDates(fetchedData);
-            // setData(fetchedData);
-            console.log(bookedDates, "data");
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        
-       
-      }, []);
-
 
     const columns = [
         { id: 'avatar', label: 'Image', minWidth: 170 },
@@ -137,7 +127,7 @@ const Complains = ()=>{
           const collectionName = 'complains';
           const docRef = doc(firestore, collectionName, id);
           await deleteDoc(docRef);
-      
+          alert("Deleted sucessfully")
           // Fetch the updated data after deletion
           await fetchData();
       
@@ -150,6 +140,7 @@ const Complains = ()=>{
     
       useEffect(() => { 
         fetchData();
+        // handleBookAppointment()
         // deleteIntent()
       }, []);
 
@@ -190,15 +181,10 @@ const Complains = ()=>{
    <TableCell>{item.phoneNo}</TableCell>
    <TableCell>{item.spouseName}</TableCell>
    <TableCell>{item.spouseNo}</TableCell>
-   <TableCell onClick ={handleOpen}>{
+   <TableCell onClick ={()=>{handleOpen(item.id)}}>{
     item.date === undefined? "Book": item.date
    }</TableCell>
-
-   {/* Render the icons in the "Actions" column */}
-   <TableCell align="center">
-     <DeleteIcon color="error" onClick={()=>{deleteData(item.id)}} />
-   </TableCell>
-   <Modal
+ <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -218,12 +204,17 @@ const Complains = ()=>{
                    excludeDates={bookedDates.map((date) => new Date(date))}
         />
       </div>
-      <button onClick={()=>{handleBookAppointment(item.id)}}>Book Appointment</button>
+      <button onClick={()=>{handleBookAppointment(selectedItemId)}}>Book Appointment</button>
             </Wrapper>
        
         
         </ModalBox>
       </Modal>
+   {/* Render the icons in the "Actions" column */}
+   <TableCell align="center">
+     <DeleteIcon color="error" onClick={()=>{deleteData(item.id)}} />
+   </TableCell>
+  
  </TableRow>
 ))}
 </TableBody>

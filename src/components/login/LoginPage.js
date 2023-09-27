@@ -5,9 +5,8 @@ import React,{useContext, useState} from "react"
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import app from "../../base"
 import { useNavigate } from "react-router-dom";
-// import img from "./userPage/2.jpg"
-import { AuthContext } from "../../Auth/AuthState";
 import {  addDoc, collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import { AuthContext } from "../../Auth/AuthState";
 
 
 const auth = getAuth(app);
@@ -15,6 +14,7 @@ const firestore = getFirestore(app);
 const LoginPage = ()=>{
 
 const[toggle, setToggle] = useState(false)
+
 
     const changeToggle = ()=>{
         setToggle(!toggle)
@@ -29,17 +29,18 @@ const[toggle, setToggle] = useState(false)
     const[password, setPassword] = useState("")
 
     const signUp = async () => {
-        const newData = {
-            username,
-            email,
-            password,
-           
-        }
+        
        const saveUser =  // Create a new user with email and password
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             // Handle successful sign-up
             const user = userCredential.user;
+            const newData = {
+                username,
+                email,
+                password,
+               userId: user.uid
+            }
             console.log('Sign-up successful:', user);
             if (user) {
                 const docRef = collection(firestore, 'users');
@@ -65,17 +66,16 @@ const[toggle, setToggle] = useState(false)
           .then((userCredential) => {
             // Handle successful login
             const user = userCredential.user;       
-            nav("/message")
+            nav("/")
           })
           .catch((error) => {
             // Handle login error
-            alert("Login error:", error)
+            alert("Login error:", error.message)
             console.error("Login error:", error);
           });
 
       };
      
-    //   console.log(querySnapshot?"y":"n", "snap")
 
     return(
         <Container>

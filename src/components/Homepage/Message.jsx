@@ -5,6 +5,8 @@ import Header from "./Header"
 import { collection, doc, getDoc, getDocs, getFirestore, query, where } from "firebase/firestore"
 import app from "../../base"
 import { AuthContext } from "../../Auth/AuthState"
+import { Link } from "react-router-dom"
+import { Button } from "antd"
 
 const firestore = getFirestore(app);
 
@@ -12,7 +14,7 @@ const Message = ()=>{
   
     const { currentUser } = useContext(AuthContext);
     const [data, setData] = useState([])
-    console.log(currentUser.uid, "user")
+    // console.log(currentUser.uid, "user")
   
 
     // const userId = currentUser.uid;
@@ -64,7 +66,7 @@ const Message = ()=>{
                     </MessageHolder>:
                     <MessageHolder>
                     Hello,
-                    <Mes> No message yet, kindly send complain to get a schedule </Mes>
+                    <Mes> No message yet, kindly register your complain to get a schedule <Link to="/register"><Button>Register Complain</Button></Link></Mes>
                 </MessageHolder>
                     }
                 </Holder>

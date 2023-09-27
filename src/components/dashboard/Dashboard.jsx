@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import { collection, deleteDoc, doc, getDocs, getFirestore, query, where } from "firebase/firestore";
 import app from "../../base";
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { deleteUser, getAuth } from "firebase/auth";
+import { deleteUser, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../Auth/AuthState";
 
 const firestore = getFirestore(app);
@@ -93,31 +93,44 @@ const Dashboard = ()=>{
           console.error('Error while deleting:', error);
         }
       }
-      const deleteAcc = (id) => {
-  // Get the current user
-  const auth = getAuth();
-  const user = auth.currentUser;
-  console.log(user, "user")
+      
 
-  // Check if a user is signed in
-  if (user) {
-    // You might want to add a confirmation dialog here before deleting.
-    // Example: if (!window.confirm('Are you sure you want to delete this account?')) return;
+const deleteAcc = async (userId, id, userEmail, userPassword) => {
+  try {
+    // Initialize Firebase Authentication
+    const auth = getAuth();
 
-    // Delete the user's account
-    deleteUser(user)
-      .then(() => {
-        // User account deleted successfully
-        // Now you can delete the data associated with the user if needed
-        deleteData(id);
-        console.log('User account deleted successfully.');
-      })
-      .catch((error) => {
-        // Handle errors (e.g., user not signed in)
-        console.error('Error deleting user account:', error);
-      });
+    // Sign in the user with their email and password
+    await signInWithEmailAndPassword(auth, userEmail, userPassword);
+
+    // Get the current user
+    const user = auth.currentUser;
+
+    if (user) {
+      // Check if the user UID matches the provided UID
+      if (user.uid === userId) {
+        // Delete the user account
+        await deleteUser(user);
+
+        // Delete the user data in Firestore using the provided 'id'
+        await deleteData(id);
+
+        alert(`User account and data for userId ${userId} deleted successfully.`);
+        console.log(`User account and data for userId ${userId} deleted successfully.`);
+      } else {
+        console.error('Provided UID does not match the current user.');
+      }
+    } else {
+      console.error('User is not signed in.');
+    }
+  } catch (error) {
+    console.error('Error deleting user account and data:', error);
   }
-}
+};
+
+      
+      
+        
 const fetchComplain = async () => {
     try {
       const querySnapshot = await getDocs(collection(firestore, 'complains'));
@@ -168,7 +181,7 @@ const fetchComplain = async () => {
       {/* Render the icons in the "Actions" column */}
       <TableCell align="center">
         {/* <EditIcon color="primary" /> */}
-        <DeleteIcon onClick={()=>{deleteAcc(item.id)}} color="error" />
+        <DeleteIcon onClick={()=>{deleteAcc(item.userId, item.id,item.email,item.password)}} color="error" />
       </TableCell>
     </TableRow>
   ))}

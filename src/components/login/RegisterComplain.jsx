@@ -61,7 +61,7 @@ const SubmitComplain = ()=>{
                       addDoc(docRef, newData);
                       console.log('Data submitted successfully');
                       alert('Your complain has been submitted successfully, kindly checked back in 5 working hours you will recieve a message soon.');   
-                    nav("/")
+                    nav("/message")
                     }
         else{
             alert("Kindly Login")

@@ -9,54 +9,66 @@ import {getAuth} from  "firebase/auth"
 import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 import App from "../../App";
 
-const firestore = getFirestore(App);
+const firestore = getFirestore(app);
 const Header = () => {
     const nav = useNavigate();
     const { currentUser } = useContext(AuthContext);
     const [toggle, setToggle] = useState(false)
-    const [checkAdmin, setCheckAdmin] = useState("")
+    const [medData, setMedData] = useState([])
+    const [userData, setUserData] = useState([])
 
    
     const changeToggle =()=>{
         setToggle(!toggle)
         // console.log(toggle)
     }
+      const [data, setData] = useState([]);
+      const [searchResult, setSearchResult] = useState(false); // Initialize as false
     
-    const check = async () => {
-        try {
-          const querySnapshot = await getDocs(
-            query(collection(firestore, 'users'), where('role', '==', 'admin'))
-          );
-      
-          const isAdmin = !querySnapshot.empty; // True if there is at least one document with role "admin"
-        //   setCheckAdmin(isAdmin); // Set the checkAdmin state based on the result
-          
-          if (isAdmin) {
-            setCheckAdmin("admin")
-            return 'admin'; // Return 'admin' if the user's role is admin
-          }
-      
-          // If not an admin, check for other roles (e.g., 'mediator')
-          const mediatorQuerySnapshot = await getDocs(
-            query(collection(firestore, 'users'), where('role', '==', 'mediator'))
-          );
-      
-          const isMediator = !mediatorQuerySnapshot.empty; // True if there is at least one document with role "mediator"
-          
-          if (isMediator) {
-            setCheckAdmin("mediator")
-            return 'mediator'; // Return 'mediator' if the user's role is mediator
-          }
-          setCheckAdmin("empty")
-          // If neither admin nor mediator, return a different value (e.g., 'empty')
-          return 'empty';
-        } catch (error) {
-          console.error('Error checking user role:', error);
-          setCheckAdmin(false); // Handle errors and set checkAdmin to false
-          return 'error'; // Return an error value
+      useEffect(() => {
+        const fetchData = async () => {
+        if (currentUser){
+            try {
+                const querySnapshot = await getDocs(
+                  query(collection(firestore, 'users'), where('role', '!=', 'admin'))
+                );
+            
+                const fetchedData = querySnapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+            
+                setData(fetchedData);
+                console.log(medData, "data");
+                const hasMatchingItem = fetchedData.some((item) => item.userId === currentUser.uid);
+            
+                setSearchResult(hasMatchingItem)
+                ; // Set to true or false
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
         }
-      };
+        }
+        fetchData();
+      }, [currentUser]);
+    
+      useEffect(() => {
+        if (currentUser){
+            // Filter the data based on the searchTerm and the field you want to check
+        const filteredData = data.filter((item) => {
+            const fieldValue = item.userId; // Replace 'fieldName' with the actual field name
       
+            // Check if the field value is equal to currentUser.uid
+            return fieldValue === currentUser.uid;
+          });
+      
+          setSearchResult(filteredData.length > 0); 
+        }
+        // Set to true if there are matching items
+      }, [data, currentUser]);
+    
+
+      console.log(searchResult,"result")
 
   const handleLogout = async () => {
     try {
@@ -69,10 +81,8 @@ const Header = () => {
       console.log(error);
     }
   };
-console.log(checkAdmin, "admin")
-    useEffect(()=>{
-        check()
-    },[])
+
+
     return(
         <>
                 <MyContainer  >
@@ -88,20 +98,21 @@ console.log(checkAdmin, "admin")
                     <MyTypography sx={{fontSize:"12px"}}>About</MyTypography>
                     </Link>
                     {
-                        checkAdmin === "empty"?
+                        currentUser?
+                        currentUser && searchResult?
+                        <Link to ="/complains" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypography sx={{fontSize:"12px"}}>View Complains</MyTypography>
+                        </Link>: 
+                        currentUser.email === "admin@gmail.com"?
+                        <Link to ="/dashboard" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypography sx={{fontSize:"12px"}}>Admin Dashboard</MyTypography>
+                        </Link>:
                         <Link to ="/message" style={{textDecoration:"none", color:"white"}}>
-                    <MyTypography sx={{fontSize:"12px"}}>Message</MyTypography>
-                    </Link>
-                    : checkAdmin === "mediator"?
-                    <Link to ="/complains" style={{textDecoration:"none", color:"white"}}>
-                    <MyTypography sx={{fontSize:"12px"}}>View Complains</MyTypography>
-                    </Link>:
-                    checkAdmin === "admin"?
-                    <Link to ="/dashboard" style={{textDecoration:"none", color:"white"}}>
-                    <MyTypography sx={{fontSize:"12px"}}>Admin Dashboard</MyTypography>
-                    </Link>:null
-                   
+                        <MyTypography sx={{fontSize:"12px"}}>Message</MyTypography>
+                        </Link>:
+                        null
                     }
+                   
                  </Wrapper2> 
                   <LoginButton> 
                    {
@@ -129,15 +140,32 @@ console.log(checkAdmin, "admin")
                     <Link to ="/" style={{textDecoration:"none", color:"white"}}>
                     <MyTypographyMobile onClick={changeToggle} sx={{fontSize:"12px"}}>About</MyTypographyMobile>
                     </Link>
-
                     {
+                        currentUser?
+                        currentUser && searchResult?
+                        <Link to ="/complains" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypographyMobile sx={{fontSize:"12px"}}>View Complains</MyTypographyMobile>
+                        </Link>: 
+                        currentUser.email === "admin@gmail.com"?
+                        <Link to ="/dashboard" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypographyMobile sx={{fontSize:"12px"}}>Admin Dashboard</MyTypographyMobile>
+                        </Link>:
+                        <Link to ="/message" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypographyMobile sx={{fontSize:"12px"}}>Message</MyTypographyMobile>
+                        </Link>:
+                        null
+                    }
+                   
+                   <LoginButton> 
+                   {
                         currentUser? 
                         <div onClick={handleLogout} style={{fontSize:"12px"}}>LOG OUT</div>
                         :
-                        <Link to="login" style={{textDecoration:"none", color:"white"}}>
-                        <MyTypographyMobile onClick={changeToggle}  sx={{fontSize:"12px"}}> Login</MyTypographyMobile>
+                        <Link to="/login" style={{textDecoration:"none", color:"white"}}>
+                        <MyTypographyMobile sx={{fontSize:"12px"}}>Login</MyTypographyMobile>
                         </Link>
                     }
+                </LoginButton>
             </WrapText>
         </MobileWrapper>
         : null

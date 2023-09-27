@@ -1,27 +1,15 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Box, Typography } from "@mui/material"
 import {styled} from "@mui/styles"
-import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../Auth/AuthState";
-
 
 const HeroSection = () =>{
-    const {currentUser} = useContext(AuthContext)
+    
     return(
         <MyBox>
           <BdgImg>
             <Modal>
-            <Text component="h1">Hisbah Commission Complain System (HCCS).</Text>
-           {
-            currentUser?
-            <Link to="/register" style={{textDecoration:"none"}}>
-            <ButtonB >MAKE COMPLAIN</ButtonB>
-            </Link>:
-             <Link to="/login" style={{textDecoration:"none"}}>
-             <ButtonB >MAKE COMPLAIN</ButtonB>
-             </Link>
-           }
+            <Text component="h1">Welcome to, Hisbah Commission Complain System (HCCS).</Text>
+
             </Modal>
           </BdgImg>
         

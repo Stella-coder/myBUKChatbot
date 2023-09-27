@@ -11,29 +11,7 @@ const firestore = getFirestore(app);
 const SideBar = ()=>{
     const nav = useNavigate();
     const [data, setData] = useState([])
-    const [checkAdmin, setCheckAdmin] = useState(false)
     const {currentUser} = useContext(AuthContext)
-
-    const checkRole = async () => {
-      try {
-        // Replace 'fieldName' with the actual name of the field containing the user's role
-        const fieldToCheck = 'userId';
-    
-        const querySnapshot = await getDocs(
-          query(collection(firestore, 'users'), where(fieldToCheck, '==', 'admin'))
-        );
-    
-        const userDoc = querySnapshot.docs.find((doc) => doc.id === currentUser.id);
-    
-        const isAdmin = !!userDoc; // True if the current user has the role 'admin'
-    
-        return isAdmin;
-      } catch (error) {
-        console.error('Error checking if the current user is an admin:', error);
-        return false; // Handle errors and return false
-      }
-    };
-    
     
     
     const handleLogout = async () => {
@@ -66,37 +44,51 @@ const SideBar = ()=>{
       };
       useEffect(()=>{
         fetchData()
-        checkRole()
       },[])
      
     return(
         <Container>
             <Logo>HCCS</Logo>
-{
-    checkAdmin?
+            {currentUser ? (
+  currentUser.email === "admin@gmail.com" ? (
     <Wrapper>
-    <Link to="/" style={{textDecoration:"none", color:"white"}}>
+      <Link to="/" style={{ textDecoration: "none", color: "white" }}>
         <Holder>Home</Holder>
-        </Link>
-    <Link to="/dashboard" style={{textDecoration:"none", color:"white"}}>
+      </Link>
+      <Link to="/dashboard" style={{ textDecoration: "none", color: "white" }}>
         <Holder>Dashboard</Holder>
-        </Link>
-        <Link to="/add" style={{textDecoration:"none", color:"white"}}>
+      </Link>
+      <Link to="/add" style={{ textDecoration: "none", color: "white" }}>
         <Holder>+ Add Mediator</Holder>
-        </Link>
-        <Holder onClick={handleLogout}>Log out</Holder>
-    </Wrapper>:
+      </Link>
+      <Holder onClick={handleLogout}>Log out</Holder>
+    </Wrapper>
+  ) : (
     <Wrapper>
-    <Link to="/" style={{textDecoration:"none", color:"white"}}>
+      <Link to="/" style={{ textDecoration: "none", color: "white" }}>
         <Holder>Home</Holder>
-        </Link>
-    <Link to="/complains" style={{textDecoration:"none", color:"white"}}>
+      </Link>
+      <Link to="/complains" style={{ textDecoration: "none", color: "white" }}>
         <Holder>Complains</Holder>
-        </Link>
-       
-        <Holder onClick={handleLogout}>Log out</Holder>
+      </Link>
+      <Holder onClick={handleLogout}>Log out</Holder>
+    </Wrapper>
+  )
+) : 
+<Wrapper>
+      <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+        <Holder>Home</Holder>
+      </Link>
+      <Link to="/dashboard" style={{ textDecoration: "none", color: "white" }}>
+        <Holder>Dashboard</Holder>
+      </Link>
+      <Link to="/add" style={{ textDecoration: "none", color: "white" }}>
+        <Holder>+ Add Mediator</Holder>
+      </Link>
+      <Holder onClick={handleLogout}>Log out</Holder>
     </Wrapper>
 }
+
         </Container>
     )
 }

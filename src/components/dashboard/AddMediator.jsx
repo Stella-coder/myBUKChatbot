@@ -21,25 +21,26 @@ const AddMediator = ()=>{
 
 
     const signUp = async () => {
-        const newData = {
-            name,
-            role,
-            email,
-            password,
-            avatar
-           
-        }
+       
         const saveUser =  // Create a new user with email and password
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             // Handle successful sign-up
             const user = userCredential.user;
             console.log('Sign-up successful:', user);
+            const newData = {
+              name,
+              role,
+              email,
+              password,
+              avatar,
+              userId:user.uid
+             
+          }
             if (user) {
                 const docRef = collection(firestore, 'users');
                           addDoc(docRef, newData);
-                          console.log('Data updated successfully');
-                          alert('Updated successfully');
+                          alert("user sucessfully created")
             
               setName("");
               setRole("");
@@ -47,12 +48,9 @@ const AddMediator = ()=>{
               setPassword("");
               
             }
-            alert("user sucessfully created")
+           
         })
-        console.log(saveUser, "users")
-       
-    
-       
+        console.log(saveUser, "users")   
       };
 
 
