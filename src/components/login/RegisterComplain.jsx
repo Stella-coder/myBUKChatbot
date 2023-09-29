@@ -41,8 +41,9 @@ const SubmitComplain = ()=>{
       };
       console.log(currentUser.uid, "user")
 
-    const submit = async () => {
+      const submit = async () => {
         if (currentUser) {
+            const currentTime = new Date(); // Get the current date and time
             const newData = {
                 firstname,
                 surname,
@@ -54,19 +55,19 @@ const SubmitComplain = ()=>{
                 spouseName,
                 spouseNo,
                 avatar,
-                userId:currentUser.uid
-               
-            }
+                userId: currentUser.uid,
+                submittedAt: currentTime.toISOString() // Add the current time as a string
+            };
             const docRef = collection(firestore, 'complains');
-                      addDoc(docRef, newData);
-                      console.log('Data submitted successfully');
-                      alert('Your complain has been submitted successfully, kindly checked back in 5 working hours you will recieve a message soon.');   
-                    nav("/message")
-                    }
-        else{
-            alert("Kindly Login")
+            await addDoc(docRef, newData); // Use await to ensure data is added before continuing
+            console.log('Data submitted successfully');
+            alert('Your complain has been submitted successfully, kindly check back in 5 working hours, you will receive a message soon.');
+            nav("/message");
+        } else {
+            alert("Kindly Login");
         }
-      };
+    };
+    
     
       const storage = getStorage();
       const uploadImage = async (e) => {

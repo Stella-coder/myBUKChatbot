@@ -16,6 +16,7 @@ import AddMediator from "./components/dashboard/AddMediator";
 import Dashboard from "./components/dashboard/Dashboard";
 import Complains from "./components/dashboard/Complains";
 import Footer from "./components/Homepage/Footer";
+import EditMediator from "./components/dashboard/EditMediator";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
      <Routes>
      <Route path="/dashboard" Component={Dashboard} />
      <Route path="/add" Component={AddMediator} />
+     <Route path="/edit/:id" Component={EditMediator} />
      <Route path="/complains" Component={Complains} />
      
       </Routes>

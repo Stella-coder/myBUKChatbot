@@ -46,7 +46,7 @@ const[toggle, setToggle] = useState(false)
                 const docRef = collection(firestore, 'users');
                           addDoc(docRef, newData);
                           console.log('Data sent successfully');
-                          alert('Updated successfully');
+                          alert('Created successfully');
             
               setUsername(""); 
               setEmail("");

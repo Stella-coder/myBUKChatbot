@@ -14,6 +14,7 @@ import app from "../../base";
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { deleteUser, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../Auth/AuthState";
+import { Link } from "react-router-dom";
 
 const firestore = getFirestore(app);
 const Dashboard = ()=>{
@@ -93,8 +94,8 @@ const Dashboard = ()=>{
           console.error('Error while deleting:', error);
         }
       }
-      
-
+     
+   
 const deleteAcc = async (userId, id, userEmail, userPassword) => {
   try {
     // Initialize Firebase Authentication
@@ -146,9 +147,7 @@ const fetchComplain = async () => {
   };
     
       useEffect(() => {
-        
         fetchData();
-        // deleteAcc()
         fetchComplain()
       }, []);
     return(
@@ -172,7 +171,10 @@ const fetchComplain = async () => {
         </TableRow>
       </TableHead>
       <TableBody>
-  {data.map((item) => (
+      {data.length > 0 ? data
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((item) => (
+  // {data.map((item) => (
     <TableRow key={item.id}>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.email}</TableCell>
@@ -180,11 +182,13 @@ const fetchComplain = async () => {
       <TableCell>{item.password}</TableCell>
       {/* Render the icons in the "Actions" column */}
       <TableCell align="center">
-        {/* <EditIcon color="primary" /> */}
+        <Link to ={`/edit/${item.id}`}>
+        <EditIcon color="primary" />
+        </Link>
         <DeleteIcon onClick={()=>{deleteAcc(item.userId, item.id,item.email,item.password)}} color="error" />
       </TableCell>
     </TableRow>
-  ))}
+  )): "No data Available, kindly check your network connection"}
 </TableBody>
     </Table>
   </TableContainer>

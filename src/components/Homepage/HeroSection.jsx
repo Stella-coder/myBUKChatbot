@@ -9,7 +9,6 @@ const HeroSection = () =>{
           <BdgImg>
             <Modal>
             <Text component="h1">Welcome to Hisbah Commission Complain System (HCCS).</Text>
-
             </Modal>
           </BdgImg>
         

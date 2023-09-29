@@ -27,6 +27,16 @@ const Complains = ()=>{
     const [selectedDate, setSelectedDate] = useState(null);
     const [bookedDates, setBookedDates] = useState([]);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const columns = [
+      { id: 'avatar', label: 'Image', minWidth: 170 },
+      { id: 'firstname', label: 'Name', minWidth: 170, },
+      {id: 'phoneNo', label: 'Phone No',minWidth: 170,},
+      { id: 'spouseName', label: 'Spouse Name',minWidth: 170, },
+      { id: 'spouseNo', label: 'Spouse No', minWidth: 170, },
+      { id: 'date',label: 'Schedule', minWidth: 170,},
+      { id: 'actions', label: 'Actions', align: 'center', minWidth: 100 },
+    ];
+
    
      const handleOpen = (id) => {
     // Set the selected item ID when the modal is opened
@@ -74,53 +84,46 @@ const Complains = ()=>{
       };
     
 
-    const columns = [
-        { id: 'avatar', label: 'Image', minWidth: 170 },
-         {
-          id: 'firstname',
-          label: 'Name',
-          minWidth: 170,
-        },
-        {
-          id: 'phoneNo',
-          label: 'Phone No',
-          minWidth: 170,
-        },
-        {
-          id: 'spouseName',
-          label: 'Spouse Name',
-          minWidth: 170,
-        },
-        {
-          id: 'spouseNo',
-          label: 'Spouse No',
-          minWidth: 170,
-        },
-        {
-          id: 'date',
-          label: 'Schedule',
-          minWidth: 170,
-        },
-        { id: 'actions', label: 'Actions', align: 'center', minWidth: 100 },
-      ];
-
+  
     
 
+    // const fetchData = async () => {
+    //     try {
+    //       const querySnapshot = await getDocs(collection(firestore, 'complains'));
+    //       const fetchedData = querySnapshot.docs.map((doc) => ({
+    //         id: doc.id,
+    //         ...doc.data()
+    //       }));
+    //       setData(fetchedData);
+    //       console.log(data, "data");
+    //     } catch (error) {
+    //       console.error('Error fetching data:', error);
+    //     }
+    //   };
     const fetchData = async () => {
-        try {
+      try {
           const querySnapshot = await getDocs(collection(firestore, 'complains'));
           const fetchedData = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data()
+              id: doc.id,
+              ...doc.data()
           }));
+  
+          // Sort the fetchedData array based on the submittedAt field in descending order
+          fetchedData.sort((a, b) => {
+              const timeA = new Date(a.submittedAt);
+              const timeB = new Date(b.submittedAt);
+              console.log(timeB - timeA)
+              return timeB - timeA;
+              
+          });
+  
           setData(fetchedData);
           console.log(data, "data");
-        } catch (error) {
+      } catch (error) {
           console.error('Error fetching data:', error);
-        }
-
-
-      };
+      }
+  };
+  
       console.log(data, "data")
       const deleteData = async (id) => {
         try {
@@ -140,9 +143,12 @@ const Complains = ()=>{
     
       useEffect(() => { 
         fetchData();
-        // handleBookAppointment()
-        // deleteIntent()
       }, []);
+      useEffect(() => {
+        if (data.length <= rowsPerPage * page) {
+            setPage(0);
+        }
+    }, [data, rowsPerPage, page]);
 
       const [page, setPage] = React.useState(0);
       const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -172,7 +178,9 @@ const Complains = ()=>{
      </TableRow>
    </TableHead>
    <TableBody>
-{data.map((item) => (
+   {data.length > 0 ? data
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((item) => (
  <TableRow key={item.id}>
    <TableCell>
     <img src={item.avatar} style={{width:"40px", height:"40px", borderRadius:"50%"}}/>
@@ -216,7 +224,7 @@ const Complains = ()=>{
    </TableCell>
   
  </TableRow>
-))}
+ )): "No data Available, kindly check your network connection"}
 </TableBody>
  </Table>
 </TableContainer>
