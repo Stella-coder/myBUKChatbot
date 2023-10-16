@@ -21,7 +21,7 @@ const Dashboard = ()=>{
     const {currentUser} = useContext(AuthContext)
     const[data, setData] = useState([])
     const[complain, setComplain] = useState([])
-    console.log(currentUser, "user")
+   
 
     const columns = [
         { id: 'name', label: 'Name', minWidth: 170 },
@@ -77,7 +77,7 @@ const Dashboard = ()=>{
           console.error('Error fetching data:', error);
         }
       };
-      console.log(data, "data")
+     
 
       const deleteData = async (id) => {
         try {
@@ -140,7 +140,7 @@ const fetchComplain = async () => {
         ...doc.data()
       }));
       setComplain(fetchedData);
-      console.log(data, "data");
+      // console.log(data, "data");
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -182,9 +182,6 @@ const fetchComplain = async () => {
       <TableCell>{item.password}</TableCell>
       {/* Render the icons in the "Actions" column */}
       <TableCell align="center">
-        <Link to ={`/edit/${item.id}`}>
-        <EditIcon color="primary" />
-        </Link>
         <DeleteIcon onClick={()=>{deleteAcc(item.userId, item.id,item.email,item.password)}} color="error" />
       </TableCell>
     </TableRow>

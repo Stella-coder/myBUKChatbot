@@ -16,28 +16,18 @@ import AddMediator from "./components/dashboard/AddMediator";
 import Dashboard from "./components/dashboard/Dashboard";
 import Complains from "./components/dashboard/Complains";
 import Footer from "./components/Homepage/Footer";
-import EditMediator from "./components/dashboard/EditMediator";
+
 
 
 function App() {
   return (
     <Router>
-      {/* <SideBar/> */}
       <div>
       <Routes>
         <Route path= "/" Component={HomePage} />
-        {/* <Route path= "/chatbot" Component={Chabot} /> */}
-       
-        {/* <Route path = "/create" Component={CreateIntent} /> */}
-        {/* <Route path = "/edit/:id" Component={EditIntent} /> */}
-        {/* <Route path = "/login" Component={LoginPage} /> */}
-        
         <Route path="/login" Component={LoginPage} />
         <Route path="/message" Component={Message} />
-      
-        
-        <Route path="/register" Component={SubmitComplain} />
-        
+        <Route path="/register" Component={SubmitComplain} /> 
       </Routes>
       </div>
       <div>
@@ -45,7 +35,6 @@ function App() {
      <Routes>
      <Route path="/dashboard" Component={Dashboard} />
      <Route path="/add" Component={AddMediator} />
-     <Route path="/edit/:id" Component={EditMediator} />
      <Route path="/complains" Component={Complains} />
      
       </Routes>

@@ -40,8 +40,13 @@ const Complains = ()=>{
    
      const handleOpen = (id) => {
     // Set the selected item ID when the modal is opened
-    setSelectedItemId(id);
-    setOpen(true);
+    if (id){
+      setSelectedItemId(id);
+      setOpen(true);
+    }
+  else{
+    console.log("no id")
+  }
   };
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -84,22 +89,7 @@ const Complains = ()=>{
       };
     
 
-  
-    
-
-    // const fetchData = async () => {
-    //     try {
-    //       const querySnapshot = await getDocs(collection(firestore, 'complains'));
-    //       const fetchedData = querySnapshot.docs.map((doc) => ({
-    //         id: doc.id,
-    //         ...doc.data()
-    //       }));
-    //       setData(fetchedData);
-    //       console.log(data, "data");
-    //     } catch (error) {
-    //       console.error('Error fetching data:', error);
-    //     }
-    //   };
+ 
     const fetchData = async () => {
       try {
           const querySnapshot = await getDocs(collection(firestore, 'complains'));
@@ -107,24 +97,13 @@ const Complains = ()=>{
               id: doc.id,
               ...doc.data()
           }));
-  
-          // Sort the fetchedData array based on the submittedAt field in descending order
-          fetchedData.sort((a, b) => {
-              const timeA = new Date(a.submittedAt);
-              const timeB = new Date(b.submittedAt);
-              console.log(timeB - timeA)
-              return timeB - timeA;
-              
-          });
-  
           setData(fetchedData);
-          console.log(data, "data");
+          
       } catch (error) {
           console.error('Error fetching data:', error);
       }
   };
   
-      console.log(data, "data")
       const deleteData = async (id) => {
         try {
           const collectionName = 'complains';
@@ -201,17 +180,20 @@ const Complains = ()=>{
         <ModalBox >
             <Wrapper>
             <h2>Book an Appointment</h2>
-      <div className="date-picker-container">
-        <DatePicker
-                   selected={selectedDate}
-                   onChange={handleDateChange}
-                   showTimeSelect
-                   dateFormat="MMMM d, yyyy h:mm aa"
-                   timeIntervals={15}
-                   minDate={new Date()} // Set minimum date to today
-                   excludeDates={bookedDates.map((date) => new Date(date))}
-        />
-      </div>
+            <div className="date-picker-container">
+  <label htmlFor="selectedDate">Select a Date and Time</label>
+  <DatePicker
+    id="selectedDate"
+    name="selectedDate"
+    selected={selectedDate}
+    onChange={handleDateChange}
+    showTimeSelect
+    dateFormat="MMMM d, yyyy h:mm aa"
+    timeIntervals={15}
+    minDate={new Date()} // Set minimum date to today
+    excludeDates={bookedDates.map((date) => new Date(date))}
+  />
+</div>
       <button onClick={()=>{handleBookAppointment(selectedItemId)}}>Book Appointment</button>
             </Wrapper>
        

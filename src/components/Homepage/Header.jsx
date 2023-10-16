@@ -39,7 +39,7 @@ const Header = () => {
                 }));
             
                 setData(fetchedData);
-                console.log(medData, "data");
+               
                 const hasMatchingItem = fetchedData.some((item) => item.userId === currentUser.uid);
             
                 setSearchResult(hasMatchingItem)
@@ -68,7 +68,7 @@ const Header = () => {
       }, [data, currentUser]);
     
 
-      console.log(searchResult,"result")
+
 
   const handleLogout = async () => {
     try {
